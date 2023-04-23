@@ -1,14 +1,18 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db.models import Model, CharField, IntegerField, ForeignKey, SET_NULL, CASCADE, TextField, BooleanField, \
     JSONField, ImageField, TextChoices, SlugField, DecimalField, SmallIntegerField, DateTimeField
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+from apps.models.categories import BaseModel
 
 
 def upload_directory_name(instance, filename):
     return f'products/{instance.product.id}/{filename}'
 
 
-class Product(Model):
+class Product(BaseModel):
     class Type(TextChoices):
         UNDERWEAR = "UW", _("Underwear")
         HAT = "H", _("Hat")
@@ -56,7 +60,7 @@ class Product(Model):
     updated_at = DateTimeField(auto_now=True)
     created_at = DateTimeField(auto_now_add=True)
     exchangeable = BooleanField(default=False)
-
+    hash_tags = ArrayField(CharField(max_length=255), default=list)
 
     def __str__(self):
         return f'{self.name}'

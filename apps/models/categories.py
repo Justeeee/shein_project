@@ -1,10 +1,21 @@
-from django.db.models import Model, CharField, SlugField, ForeignKey, CASCADE
+from django.db.models import CharField, SlugField, ForeignKey, CASCADE
+from django.db.models import Model, DateTimeField
 from django.utils.text import slugify
 
 
-class Category(Model):
+class BaseModel(Model):
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class Category(BaseModel):
     name = CharField(max_length=255)
     slug = SlugField(max_length=255, unique=True, blank=True)
+
+
 
     def _get_unique_slug(self):
         slug = slugify(self.name)
@@ -25,11 +36,14 @@ class Category(Model):
         return self.name
 
 
-class SubCategory(Model):
+class SubCategory(BaseModel):
     name = CharField(max_length=255)
     parent = ForeignKey('Category', CASCADE, related_name='subcategory')
     slug = SlugField(max_length=255, unique=True, blank=True)
     verbose_name_plural = 'SubCategories'
+
+
+
 
     def _get_unique_slug(self):
         slug = slugify(self.name)

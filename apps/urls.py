@@ -15,7 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from rest_framework.routers import DefaultRouter
+
+from apps.views import CategoryModelViewSet, ProductModelViewSet, ProductImageAPIView, SubCategoryModelViewSet
+
+router = DefaultRouter()
+router.register('category', CategoryModelViewSet, basename='category')
+router.register('subcategory', SubCategoryModelViewSet, basename='subcategory')
+router.register('product', ProductModelViewSet, basename='product')
+
 
 urlpatterns = [
-    path(),
+    path('', include(router.urls)),
+    path('images/', ProductImageAPIView.as_view(), name='images'),
+    path('api-auth/', include('rest_framework.urls')),
 ]
