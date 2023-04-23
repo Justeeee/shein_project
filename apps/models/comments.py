@@ -16,7 +16,7 @@ class Comment(Model):
     created_at = DateTimeField(auto_now_add=True)
 
 
-class ProductImages(Model):
+class CommentsImages(Model):
     comment = ForeignKey('Comment', CASCADE)
     image = ImageField(upload_to=upload_directory_name)
 
