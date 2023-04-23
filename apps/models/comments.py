@@ -10,13 +10,13 @@ class Comment(Model):
     product = ForeignKey('Product', CASCADE)
     headline = CharField(max_length=255)
     text = TextField()
-    author = ForeignKey('users.User', CASCADE)
+    # author = ForeignKey('users.User', CASCADE)
     rate = SmallIntegerField(default=0)
     updated_at = DateTimeField(auto_now=True)
     created_at = DateTimeField(auto_now_add=True)
 
 
-class CommentsImages(Model):
+class CommentImages(Model):
     comment = ForeignKey('Comment', CASCADE)
     image = ImageField(upload_to=upload_directory_name)
 

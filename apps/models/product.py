@@ -1,5 +1,5 @@
 from django.db.models import Model, CharField, IntegerField, ForeignKey, SET_NULL, CASCADE, TextField, BooleanField, \
-    JSONField, ImageField, TextChoices, SlugField, DecimalField, SmallIntegerField
+    JSONField, ImageField, TextChoices, SlugField, DecimalField, SmallIntegerField, DateTimeField
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -39,6 +39,7 @@ class Product(Model):
     color = CharField(
         max_length=1,
         choices=Color.choices,
+        default=None
     )
     size = CharField(
         max_length=3,
@@ -48,24 +49,28 @@ class Product(Model):
     slug = SlugField(max_length=255, unique=True, blank=True)
     price = DecimalField(decimal_places=2, max_digits=9)
     subcategory = ForeignKey('SubCategory', CASCADE)
-    description = JSONField(default=dict)
+    detail = TextField()
+    quantity = SmallIntegerField(default=1)
     discount = SmallIntegerField(default=0)
-    quantity = IntegerField(default=1)
+    information = JSONField(default=dict)
+    updated_at = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
     exchangeable = BooleanField(default=False)
+
 
     def __str__(self):
         return f'{self.name}'
 
     def stock(self):
         return 'In Stock' if self.quantity > 0 else 'Out of Stock'
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.slug = slugify(self.name)
-        i = Product.objects.filter(slug=self.slug).count()
-        while Product.objects.filter(slug=self.slug).exists():
-            self.slug += f'{i}'
-
-        super().save(force_insert, force_update, using, update_fields)
+    #
+    # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    #     self.slug = slugify(self.name)
+    #     i = Product.objects.filter(slug=self.slug).count()
+    #     while Product.objects.filter(slug=self.slug).exists():
+    #         self.slug += f'{i}'
+    #
+    #     super().save(force_insert, force_update, using, update_fields)
 
 
 class ProductImages(Model):

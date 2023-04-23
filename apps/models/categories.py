@@ -21,6 +21,9 @@ class Category(Model):
             self.name = slugify(self.name)
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
 
+    def __str__(self):
+        return self.name
+
 
 class SubCategory(Model):
     name = CharField(max_length=255)
@@ -43,3 +46,5 @@ class SubCategory(Model):
             self.name = slugify(self.name)
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
 
+    def __str__(self):
+        return self.name
