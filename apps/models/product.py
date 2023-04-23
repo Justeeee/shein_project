@@ -19,10 +19,21 @@ class Product(Model):
         X_LARGE = "XL", _("XL")
         XX_LARGE = "XXL", _("XXL")
 
+    class Color(TextChoices):
+        BLACK = "B", _("Black")
+        WHITE = "W", _("White")
+        GREEN = "G", _("Green")
+        YELLOW = "Y", _("Yellow")
+        RED = "R", _("Red")
+        PURPLE = "P", _("Purple")
 
     type = CharField(
         max_length=3,
         choices=Type.choices,
+    )
+    color = CharField(
+        max_length=1,
+        choices=Color.choices,
     )
     name = CharField(max_length=255)
     price = IntegerField(default=0)
@@ -30,7 +41,6 @@ class Product(Model):
     description = JSONField()
     quantity = IntegerField(default=1)
     # size = TODO add size
-    # color = TODO add color
     # TODO add sold out
     exchangeable = BooleanField(default=False)
 
