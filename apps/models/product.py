@@ -13,12 +13,6 @@ def upload_directory_name(instance, filename):
 
 
 class Product(BaseModel):
-    class Type(TextChoices):
-        UNDERWEAR = "UW", _("Underwear")
-        HAT = "H", _("Hat")
-        TSHIRT = "TSH", _("T-Shirt")
-        SHOE = "SH", _("Shoe")
-        PANTS = "P", _("Pants")
 
     class Size(TextChoices):
         X_SMALL = "XS", _("XS")
@@ -36,10 +30,7 @@ class Product(BaseModel):
         RED = "R", _("Red")
         PURPLE = "P", _("Purple")
 
-    type = CharField(
-        max_length=3,
-        choices=Type.choices,
-    )
+
     color = CharField(
         max_length=1,
         choices=Color.choices,
