@@ -1,6 +1,11 @@
 from django.db.models import Model, CharField, IntegerField, ForeignKey, SET_NULL, CASCADE, TextField, BooleanField, \
-    JSONField, ImageField, TextChoices
+    JSONField, ImageField, TextChoices, SlugField, DecimalField, SmallIntegerField
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+
+def upload_directory_name(instance, filename):
+    return f'products/{instance.product.id}/{filename}'
 
 
 class Product(Model):
@@ -35,16 +40,37 @@ class Product(Model):
         max_length=1,
         choices=Color.choices,
     )
+    size = CharField(
+        max_length=3,
+        choices=Size.choices,
+    )
     name = CharField(max_length=255)
-    price = IntegerField(default=0)
+    slug = SlugField(max_length=255, unique=True, blank=True)
+    price = DecimalField(decimal_places=2, max_digits=9)
     subcategory = ForeignKey('SubCategory', CASCADE)
-    description = JSONField()
+    description = JSONField(default=dict)
+    discount = SmallIntegerField(default=0)
     quantity = IntegerField(default=1)
-    # size = TODO add size
-    # TODO add sold out
     exchangeable = BooleanField(default=False)
 
+    def __str__(self):
+        return f'{self.name}'
 
-class ProductImage(Model):
-    image = ImageField(upload_to='shops/images/')
-    product = ForeignKey('apps.Product', CASCADE)
+    def stock(self):
+        return 'In Stock' if self.quantity > 0 else 'Out of Stock'
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.slug = slugify(self.name)
+        i = Product.objects.filter(slug=self.slug).count()
+        while Product.objects.filter(slug=self.slug).exists():
+            self.slug += f'{i}'
+
+        super().save(force_insert, force_update, using, update_fields)
+
+
+class ProductImages(Model):
+    product = ForeignKey('Product', CASCADE)
+    image = ImageField(upload_to=upload_directory_name)
+
+    def __str__(self):
+        return f'{self.product.name} -> {self.image.name}'
